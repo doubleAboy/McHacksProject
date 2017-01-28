@@ -152,10 +152,11 @@ var movementModule = (function(boatModule, fishModule){
         init: function(boat, boat_marker, fish_arr, marker_arr, map){
             boatController(boat, boat_marker, map);
             var fish_movement = setInterval( function(){
-                moveMarker(map, marker, fish, fish.velx, fish.vely)
+                for (i = 0; i < fish_arr.length; i++){
+                    moveMarker(map, marker_arr[i], fish_arr[i], fish_arr[i].velx, fish_arr[i].vely);
+                }
             }, 1000/30);
         }
-
     }
 }(boatModule, fishModule));
 
@@ -166,7 +167,6 @@ function setMarkers(map, num_fish, marker_arr){
             position: fishModule.getFishPos(fish),
             map: map
         });
-        alert(i);
         marker_arr.push(fish_marker);
     }
 }
@@ -190,11 +190,9 @@ function initMap(){
         map: map
     });
 
-    setMarkers(map, num_fish);
-    alert(marker_arr);
+    setMarkers(map, num_fish, marker_arr);
 
-    movementModule.init(boat, boat_marker, fish_arr, marker_arr, map);
-    
+    movementModule.init(boat, boat_marker, fishModule.getFishArr(), marker_arr, map);
 };
 
 window.addEventListener("onload", initMap());
