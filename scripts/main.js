@@ -7,7 +7,7 @@ var boatModule = (function(){
     function Boat (name, lat, lng){
         this.name = name;
         this.colour = "rgb(255, 77, 77)"
-        this.col_size = 10; //pixels radius
+        this.col_size = 3; //pixels radius
         this.lat = lat;
         this.lng = lng;
         this.velx = 0;
@@ -36,6 +36,14 @@ var boatModule = (function(){
 var fishModule = (function(){
     var fish_array = [];
 
+    function posneg(){
+        if (Math.round(Math.random()) == 0){
+            return -1;
+        } else {
+            return 1;
+        }
+    }
+
     function Fish (name, lat, lng) {
         this.name = name;
         this.colour = "rgb(255, 77, 77)"
@@ -43,8 +51,8 @@ var fishModule = (function(){
 		this.weight = 5;
         this.lat = lat;
         this.lng = lng;
-        this.velx = Math.random()*1;
-        this.vely = Math.random()*1;
+        this.velx = Math.random()*0.1*posneg(); //speedx and speedy between -0.1 and 0.1
+        this.vely = Math.random()*0.1*posneg();
     };
 
     return {
@@ -59,7 +67,7 @@ var fishModule = (function(){
 
         generateFishes: function (n, boat, bounds){
             for (i = 0; i < n; i++){
-                var fish = new Fish ("FishyMcFishFace", boat.lat + Math.random()*bounds, boat.lng + Math.random()*bounds);
+                var fish = new Fish ("FishyMcFishFace", (boat.lat - bounds) + Math.random()*2*bounds, (boat.lng - bounds) + Math.random()*2*bounds);
                 fish_array.push(fish);
             }
         },
@@ -67,13 +75,17 @@ var fishModule = (function(){
         getFishArr: function(){
             return fish_array;
         },
+
+        updateFishArr: function(fish_arr){
+            fish_array = fish_arr;
+        },
 		
 		getFishPos: function(fish){
 			return {lat: fish.lat, lng: fish.lng};
 		}
     }
 }());
-/*
+
 var actionModule = (function(boatModule, fishModule){
 
     function calcDistance (x, y){
@@ -81,40 +93,59 @@ var actionModule = (function(boatModule, fishModule){
     }
 
     function collision (boat, fish_arr){
-        for (i = 0; i < fish_arry.length; i++){
+        for (i = 0; i < fish_arr.length; i++){
             if (calcDistance (boat, fish_arr[i]) < boat.col_size){
+                //alert("caught");
                 return i; //index of fish
             }
         }
         return -1;
     }
 
-    function catchFish (boat, fish_arr) {
-        var fish_index = collision (boat, fish_arr)
-        //TODO:remove fish from fish_arr
+    function catchFish (boat, fish_arr, marker_arr) {
+        var fish_index = collision (boat, fish_arr);
+        if (fish_index == -1){
+            return
+        }
         boat.caught_fish += 1;
         boat.weight += fish_arr[fish_index].weight;
+
+        fish_arr.splice(fish_index, 1);
+        marker_arr[i].setMap(null);
+        marker_arr.splice(fish_index, 1);
+        //alert(fish_arr);
+        //alert(marker_arr);
     }
 
-    function calcAllBoats (boat_arr, fish_arr){
-        for (j = 0; j < boat_arr.length; j++){
-            catchFish(boat_arr[j], fish_arr);
-        }
+    function calcAllBoats (boat, fish_arr, marker_arr){
+        catchFish(boat, fish_arr, marker_arr);
+        var boat_arr = [boat]; //patch fix one -> updateBoats take in a boat arr, but right now we only have one boat, and it's called with a boat as input up the chain
         boatModule.updateBoats(boat_arr);
+        fishModule.updateFishArr(fish_arr);
     }
 
     return {
-
+        frameAction: function(boat, fish_arr, marker_arr){
+            calcAllBoats(boat, fish_arr, marker_arr);
+        }
     }
-
 }(boatModule, fishModule));
-*/
 
-var movementModule = (function(boatModule, fishModule){
+var movementModule = (function(boatModule, fishModule, actionModule){
 
     function moveMarker(map, marker, item, velx, vely){
         item.lng += velx;
+        if (item.lng > 180) {
+            item.lng = item.lng - 360;
+        } else if (item.lng < -180) {
+            item.lng = 360 + item.lng;
+        }
         item.lat += vely;
+        if (item.lat > 90) {
+            item.lat = item.lat - 180;
+        } else if (item.lng < -90) {
+            item.lat = item.lat + 180;
+        }
         marker.setPosition( new google.maps.LatLng( item.lat, item.lng ) );
     }
 
@@ -126,20 +157,20 @@ var movementModule = (function(boatModule, fishModule){
         window.addEventListener("keydown", function(e){
             switch (event.keyCode){
                 case 37: 
-                    moveMarker(map, marker, boat, -0.1, 0);
-                    panToMarker(map, item);
+                    moveMarker(map, marker, boat, -0.3, 0);
+                    panToMarker(map, boat);
 			        break;
 			    case 38: 
-                    moveMarker(map, marker, boat, 0, 0.1);
-                    panToMarker(map, item);
+                    moveMarker(map, marker, boat, 0, 0.3);
+                    panToMarker(map, boat);
 			        break;
 			    case 39: 
-                    moveMarker(map, marker, boat, 0.1, 0);
-                    panToMarker(map, item);
+                    moveMarker(map, marker, boat, 0.3, 0);
+                    panToMarker(map, boat);
 			        break;
 			    case 40: 
-                    moveMarker(map, marker, boat, 0, -0.1);
-                    panToMarker(map, item);
+                    moveMarker(map, marker, boat, 0, -0.3);
+                    panToMarker(map, boat);
 			        break;
 			    default: 
                     return; // exit this handler for other keys
@@ -148,17 +179,18 @@ var movementModule = (function(boatModule, fishModule){
     }
 
     return{
-
         init: function(boat, boat_marker, fish_arr, marker_arr, map){
             boatController(boat, boat_marker, map);
             var fish_movement = setInterval( function(){
+                actionModule.frameAction(boat, fish_arr, marker_arr);
                 for (i = 0; i < fish_arr.length; i++){
+                    //alert(i);
                     moveMarker(map, marker_arr[i], fish_arr[i], fish_arr[i].velx, fish_arr[i].vely);
                 }
             }, 1000/30);
         }
     }
-}(boatModule, fishModule));
+}(boatModule, fishModule, actionModule));
 
 function setMarkers(map, num_fish, marker_arr){
     for (i = 0; i < num_fish; i++){
@@ -184,6 +216,7 @@ function initMap(){
     var marker_arr = [];
 
     fishModule.generateFishes(num_fish, boat, bounds);
+    fish_arr = fishModule.getFishArr();
 
     var boat_marker = new google.maps.Marker({
         position: boat,
@@ -192,7 +225,7 @@ function initMap(){
 
     setMarkers(map, num_fish, marker_arr);
 
-    movementModule.init(boat, boat_marker, fishModule.getFishArr(), marker_arr, map);
+    movementModule.init(boat, boat_marker, fish_arr, marker_arr, map);
 };
 
 window.addEventListener("onload", initMap());
