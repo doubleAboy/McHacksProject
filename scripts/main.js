@@ -196,7 +196,7 @@ var movementModule = (function(boatModule, fishModule, actionModule){
                 fillOpacity: 0.05,
                 map: map,
                 center: boat_marker.position,
-                radius: 250000
+                radius: 333000
             });
             boatController(boat, boat_marker, boat_circle, map);
             var fish_movement = setInterval( function(){
