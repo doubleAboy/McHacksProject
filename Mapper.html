@@ -8,7 +8,7 @@
        }
     </style>
   </head>
-  <body>
+  <body onload="setter();">
     <div id="map"></div>
     <script>
 	var marker;
@@ -17,7 +17,8 @@
 		marker.setPosition( new google.maps.LatLng( x, y ) );
 		map.panTo( new google.maps.LatLng( x, y ) );
 	};
-		
+	
+	
 		var x = -25;
 		var y = 131;
 		var map;
@@ -33,52 +34,39 @@
         });
       }
 	  
+	  window.onkeydown = function(e) {
+		   var key = e.keyCode ? e.keyCode : e.which;
+		   if (key == 37) {
+			   left();
+		   }else if (key == 38) {
+			   up();
+		   }else if (key == 39) {
+			   right();
+		   }else if (key == 40) {
+			   down();
+		   }
+		}
+	  
+	  
 	  function right(){ 
 		y = y + 0.1
 		moveBus( map, marker )
 	  }
 	  function left(){ 
-		y = y - 0.01; 
+		y = y - 0.1; 
 		moveBus( map, marker )
 	  }
 	  function up(){ 
-		y = y + 0.01; 
+		x = x + 0.1; 
 		moveBus( map, marker )
 	  }
 	  function down(){ 
-		y = y + 0.01; 
+		x = x - 0.1; 
 		moveBus( map, marker )
 	  }
 	 
-	$(document).ready(function(){
-		InitializeKeyboard();
-		});
-
-	 
-	function InitializeKeyboard(){ 
-	 //event listener
-	  $(document).keydown(function(e) {
-		switch(e.which) {
-			case 37: left();
-			break;
-
-			case 38: up();
-			break;
-
-			case 39: right();
-			break;
-
-			case 40: down();
-			break;
-
-			default: return; // exit this handler for other keys
-		}
-		e.preventDefault(); // prevent the default action (scroll / move caret)
-		});
-	}	
     </script>
-	
-    <script async defer
+	<script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjEiPLon9zQxbeL7xRux9UAvYtW3xKvzs&callback=initMap">
     </script>
 	<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
