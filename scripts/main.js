@@ -149,27 +149,35 @@ var movementModule = (function(boatModule, fishModule, actionModule){
         marker.setPosition( new google.maps.LatLng( item.lat, item.lng ) );
     }
 
+    function moveCircle(map, circle, item){
+        circle.setCenter(new google.maps.LatLng(item.lat, item.lng));
+    }
+
     function panToMarker(map, item){
         map.panTo( new google.maps.LatLng( item.lat, item.lng ) );
     }
 
-    function boatController(boat, marker, map){
+    function boatController(boat, marker, boat_circle, map){
         window.addEventListener("keydown", function(e){
             switch (event.keyCode){
                 case 37: 
                     moveMarker(map, marker, boat, -0.3, 0);
+                    moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
 			    case 38: 
                     moveMarker(map, marker, boat, 0, 0.3);
+                    moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
 			    case 39: 
                     moveMarker(map, marker, boat, 0.3, 0);
+                    moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
 			    case 40: 
                     moveMarker(map, marker, boat, 0, -0.3);
+                    moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
 			    default: 
@@ -180,7 +188,17 @@ var movementModule = (function(boatModule, fishModule, actionModule){
 
     return{
         init: function(boat, boat_marker, fish_arr, marker_arr, map){
-            boatController(boat, boat_marker, map);
+            var boat_circle = new google.maps.Circle({
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.5,
+                strokeWeight: 1,
+                fillColor: '#FF0000',
+                fillOpacity: 0.05,
+                map: map,
+                center: boat_marker.position,
+                radius: 250000
+            });
+            boatController(boat, boat_marker, boat_circle, map);
             var fish_movement = setInterval( function(){
                 actionModule.frameAction(boat, fish_arr, marker_arr);
                 for (i = 0; i < fish_arr.length; i++){
