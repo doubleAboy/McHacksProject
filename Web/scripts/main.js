@@ -233,7 +233,8 @@ var fishModule = (function(){
             fish_array.push(fish);
         },
 
-        getFish: function (ind){
+
+	    getFish: function (ind){
             return fish_array[ind];
         },
 
@@ -280,6 +281,7 @@ var actionModule = (function(boatModule, fishModule){
             return
         }
         boat.caught_fish += 1;
+	    document.getElementById("num").innerHTML = "Number of Fish Caught: " + boat.caught_fish;
         boat.weight += fish_arr[fish_index].weight;
         fishModule.decreasePop(1);
 
