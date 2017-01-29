@@ -396,6 +396,27 @@ function setMarkers(map, num_fish, marker_arr){
     }
 }
 
+function isWater(pointLat, pointLong){ 
+		var img = document.getElementById('mapImg');
+		// Bypass the security issue : drawing a canvas from an external URL.
+		img.crossOrigin='anonymous';
+		img.src = "http://maps.googleapis.com/maps/api/staticmap?center=" + pointLat + "," + pointLong + "&zoom=7&size=10x10&maptype=roadmap&sensor=false&key=AIzaSyBlgvy0fzNQ1YihpqsBMg9afTrJhYTMeBo";
+		//add to canvas
+		var canvas = document.getElementById("myCanvas");	
+		canvas.width = img.width;
+		canvas.height = img.height;			
+		canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+		var pixelData = canvas.getContext('2d').getImageData(1, 1, 1, 1).data;
+		//check color
+		if (pixelData[0] == 163 &&
+			pixelData[1] == 204 &&
+			pixelData[2] == 255) {
+			return true;
+		} else {
+			return false;
+	}
+}
+
 function initMap(){
     //boatModule.createBoat ("BoatyMcBoatFace", -25.363, 131.044);
     boatModule.createBoat ("BoatyMcBoatFace", -25.363, 170.044);
