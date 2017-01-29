@@ -32,7 +32,7 @@ var boatModule = (function(){
 
 //fishModule
 var fishModule = (function(){
-    var maxPop = 20;
+    var maxPop = 30;
     var currPop = 10;
 
     var fish_array = [];
@@ -486,40 +486,48 @@ function setMarkers(map, num_fish, marker_arr){
     }
 }
 
-function isWater(pointLat, pointLong){ 
-		var img = document.getElementById('mapImg');
-		// Bypass the security issue : drawing a canvas from an external URL.
-		img.crossOrigin='anonymous';
-		img.src = "http://maps.googleapis.com/maps/api/staticmap?center=" + pointLat + "," + pointLong + "&zoom=7&size=10x10&maptype=roadmap&sensor=false&key=AIzaSyBlgvy0fzNQ1YihpqsBMg9afTrJhYTMeBo";
-		//add to canvas
-		var canvas = document.getElementById("myCanvas");	
-		canvas.width = img.width;
-		canvas.height = img.height;			
-		canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
-		var pixelData = canvas.getContext('2d').getImageData(1, 1, 1, 1).data;
 
-        alert()
-		//check color
-        alert(pixelData[0]);
-        alert(pixelData[1]);
-        alert(pixelData[2]);
-		if (pixelData[0] == 163 &&
-			pixelData[1] == 204 &&
-			pixelData[2] == 255) {
-            alert("true");
-			return true;
-		} else {
-            alert("false");
-			return false;
-	    }
+function isLand(pointLat, pointLong){
+    
+    var myImg = document.getElementById("mapImg");
+    var canvas = document.getElementById("myCanvas");
+    var context = canvas.getContext("2d");
+    //canvas.width = myImg.width+50;
+    //canvas.height = myImg.height+50;
+    context.drawImage(myImg, 0, 0);
+    alert("hi");
+    var pixel = context.getImageData((pointLong + 180), (85 - pointLat), 1, 1);
+    alert("hi");
+    var data = pixel.data;
+    alert(""+data[0]+", "+data[1]+", "+data[2]);
+    //var red = data[((canvas.width*(85 - pointLat))+(pointLong + 180))*4]
+    
+    //(pointLong + 180), 85 - pointLat
+			
+    //ctx.drawImage(myImg, 0, 0);
+	
+    //var pixelData = ctx.getImageData(pointLong + 180, 85 - pointLat, 5, 5);
+
+    //alert(Object.keys(pixelData));
+
+    //var finalData = pixelData.data;
+
+    //alert(finalData.toString());
+
+    //alert(""+red);
+	/*if (pixelData[0] == 0 &&
+		pixelData[1] == 0 &&
+		pixelData[2] == 0) {
+        alert("true");
+		return true;
+	} else {
+        alert("false");
+		return false;
+	} */ 
 }
 
 function initMap(){
-    
-
-    //isWater(-25, 175);
-    //isWater(-25, 124);
-    //boatModule.createBoat ("BoatyMcBoatFace", -25.363, 131.044);
+    isLand(39,-38);
     boatModule.createBoat ("BoatyMcBoatFace", -25.363, -20.044);
     var boat = boatModule.getBoat();
     var num_fish = 10;
