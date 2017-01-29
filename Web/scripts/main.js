@@ -179,7 +179,8 @@ var fishModule = (function(){
 
                     var icon = {
                         url: "../Images/FishUp.gif",
-                        optimized: false,
+
+			    optimized: false,
                         scaledSize: new google.maps.Size(12, 25), // scaled size
                         origin: new google.maps.Point(0,0), // origin
                         anchor: new google.maps.Point(6, 12) // anchor
@@ -221,6 +222,12 @@ var fishModule = (function(){
                 fish_arr[i].age += 30/1000;
                 fish_arr[i].timeSinceLastMate += 30/1000;
                 fish_arr[i].isDead();
+		if(fish_arr[i].dead){
+			fish_arr.splice(i, 1);
+			marker_arr[i].setMap(null);
+			marker_arr.splice(i, 1);
+			i--;
+		}
                 fish_arr[i].readyToMate();
                 fish_arr[i].isRepel(fish_arr);
             }
@@ -286,7 +293,7 @@ var actionModule = (function(boatModule, fishModule){
         fishModule.decreasePop(1);
 
         fish_arr.splice(fish_index, 1);
-        marker_arr[i].setMap(null);
+        marker_arr[fish_index].setMap(null);
         marker_arr.splice(fish_index, 1);
         //alert(fish_arr);
         //alert(marker_arr);
