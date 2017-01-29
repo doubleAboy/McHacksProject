@@ -51,13 +51,18 @@ var fishModule = (function(){
 		this.weight = 5;
         this.lat = lat;
         this.lng = lng;
-        this.velx = Math.random()*0.1*posneg(); //speedx and speedy between -0.1 and 0.1
-        this.vely = Math.random()*0.1*posneg();
+        this.velx = Math.random()*0.05*posneg(); //speedx and speedy between -0.1 and 0.1
+        this.vely = Math.random()*0.05*posneg();
+        this.age = 0,
+        this.dead = false,
+        this.repelling = false
     };
 
+/*
     function calcMovement (fish, fish_arr){
-        
+
     }
+*/
 
     return {
         createFish: function (name, lat, lng){
@@ -140,15 +145,15 @@ var movementModule = (function(boatModule, fishModule, actionModule){
     function moveMarker(map, marker, item, velx, vely){
         item.lng += velx;
         if (item.lng > 180) {
-            item.lng = item.lng - 360;
+            item.velx = (-1)*item.velx;
         } else if (item.lng < -180) {
-            item.lng = 360 + item.lng;
+            item.velx = (-1)*item.velx;
         }
         item.lat += vely;
-        if (item.lat > 90) {
-            item.lat = item.lat - 180;
-        } else if (item.lng < -90) {
-            item.lat = item.lat + 180;
+        if (item.lat > 85) {
+            item.vely = (-1)*item.vely;
+        } else if (item.lat < -85) {
+            item.vely = (-1)*item.vely;
         }
         marker.setPosition( new google.maps.LatLng( item.lat, item.lng ) );
     }
@@ -165,9 +170,9 @@ var movementModule = (function(boatModule, fishModule, actionModule){
         window.addEventListener("keydown", function(e){
             switch (event.keyCode){
                 case 65: //left 
-                    moveMarker(map, marker, boat, -0.5, 0);
-                    moveCircle(map, boat_circle, boat);
-                    panToMarker(map, boat);
+                    moveMarker(map, marker, boat, -0.5, 0); //moves boat marker
+                    moveCircle(map, boat_circle, boat); //moves circle
+                    panToMarker(map, boat); //pans map to boat marker
 			        break;
 			    case 87: //up
                     moveMarker(map, marker, boat, 0, 0.5);
