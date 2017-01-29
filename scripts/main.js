@@ -55,6 +55,10 @@ var fishModule = (function(){
         this.vely = Math.random()*0.1*posneg();
     };
 
+    function calcMovement (fish, fish_arr){
+        
+    }
+
     return {
         createFish: function (name, lat, lng){
             var fish = new Fish (name, lat, lng);
@@ -160,22 +164,22 @@ var movementModule = (function(boatModule, fishModule, actionModule){
     function boatController(boat, marker, boat_circle, map){
         window.addEventListener("keydown", function(e){
             switch (event.keyCode){
-                case 37: 
+                case 65: //left 
                     moveMarker(map, marker, boat, -0.5, 0);
                     moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
-			    case 38: 
+			    case 87: //up
                     moveMarker(map, marker, boat, 0, 0.5);
                     moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
-			    case 39: 
+			    case 68: //right
                     moveMarker(map, marker, boat, 0.5, 0);
                     moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
-			    case 40: 
+			    case 83: //down
                     moveMarker(map, marker, boat, 0, -0.5);
                     moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
