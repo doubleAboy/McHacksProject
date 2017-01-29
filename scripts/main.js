@@ -44,10 +44,10 @@ var fishModule = (function(){
         }
     }
 
-    function numFishInRange(fish, fish_arr){
+    function numFishInRange(fish, fish_arr, n){
         var num_fish_in_range = 0;
         for (j = 0; j < fish_arr.length; j++){
-            if (Math.sqrt(Math.pow(fish_arr[j].lng - fish.lng, 2) + Math.pow(fish_arr[j].lat - fish.lat, 2)) < fish.repelEpsilon){
+            if (Math.sqrt(Math.pow(fish_arr[j].lng - fish.lng, 2) + Math.pow(fish_arr[j].lat - fish.lat, 2)) < n){
                 num_fish_in_range += 1;
             }
         }
@@ -66,18 +66,18 @@ var fishModule = (function(){
         this.maxvel = Math.sqrt(Math.pow(this.velx, 2) + Math.pow(this.vely, 2));
         this.age = 0,
         this.dead = false,
-        this.repelling = false,
-        this.repelEpsilon = 5,  //distance for density for repelling
+        this.repelling = 1, //2 = repel, 1 = neutral, 0 = attract
+        this.repelEpsilon = 7,  //distance for density for repelling
         this.canMate = false,
         this.mateRange = 3,
         this.timeSinceLastMate = 0,
         this.litterSize = 5,
         this.libido = Math.random()*4 + 4,
-        this.attractionlimit = 20
+        this.attractionLimit = 5
     };
 
     function repelWeight(dist){
-        return 1/dist;
+        return 1/Math.sqrt(dist);
     }
 
     function attractWeight(dist){
@@ -88,7 +88,7 @@ var fishModule = (function(){
         for (i = 0; i < fish_arr.length; i++){
             for (j = 0; j < fish_arr.length; j++){
                 if ( i == j ) continue;
-                if (fish_arr[i].repelling || fish_arr[j].repelling){
+                if (fish_arr[i].repelling == 2){
                     var dvx = repelWeight(Math.abs(fish_arr[i].lng - fish_arr[j].lng));
                     var dvy = repelWeight(Math.abs(fish_arr[i].lat - fish_arr[j].lat));
                     if (fish_arr[i].lng - fish_arr[j].lng > 0){
@@ -105,8 +105,9 @@ var fishModule = (function(){
                     var tvel = Math.sqrt(Math.pow(fish_arr[i].velx, 2) + Math.pow(fish_arr[i].vely, 2));
                     fish_arr[i].velx = (fish_arr[i].velx/tvel) * fish_arr[i].maxvel;
                     fish_arr[i].vely = (fish_arr[i].vely/tvel) * fish_arr[i].maxvel;
-                } else if (fish)
-                else {
+                } else if (fish_arr[i].repelling == 1){
+                    continue;
+                } else {
                     var dvx = attractWeight(Math.abs(fish_arr[i].lng - fish_arr[j].lng));
                     var dvy = attractWeight(Math.abs(fish_arr[i].lat - fish_arr[j].lat));
                     if (fish_arr[i].lng - fish_arr[j].lng > 0){
@@ -130,12 +131,14 @@ var fishModule = (function(){
     }
 
     Fish.prototype.isRepel = function(fish_arr){
-        if (numFishInRange(this, fish_arr) > 4){ //4 is the number of fish in range before repel, it includes itself
-            this.repelling = true;
+        if (numFishInRange(this, fish_arr, this.repelEpsilon) > 3){ //4 is the number of fish in range before repel, it includes itself
+            this.repelling = 2;
         } else if (this.timeSinceLastMate < this.libido) {
-            this.repelling = true;
-        } else{
-            this.repelling = false;
+            this.repelling = 2;
+        } else if (numFishInRange(this, fish_arr, this.attractionLimit) > 2){
+            this.repelling = 0;
+        } else {
+            this.repelling = 1;
         }
     }
 
@@ -144,7 +147,7 @@ var fishModule = (function(){
             this.dead = true;
             this.velx = 0;
             this.vely = 0;
-            this.repelling = false;
+            this.repelling = 1;
             this.canMate = false;
         }
     }
