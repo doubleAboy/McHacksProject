@@ -32,6 +32,8 @@ var boatModule = (function(){
 
 //fishModule
 var fishModule = (function(){
+    var maxPop = 20;
+
     var fish_array = [];
 
     function posneg(){
@@ -175,9 +177,9 @@ var fishModule = (function(){
                     var icon = {
                         url: "../Images/FishUp.gif",
                         optimized: false,
-                        scaledSize: new google.maps.Size(25, 50), // scaled size
+                        scaledSize: new google.maps.Size(12, 25), // scaled size
                         origin: new google.maps.Point(0,0), // origin
-                        anchor: new google.maps.Point(0, 0) // anchor
+                        anchor: new google.maps.Point(6, 12) // anchor
                     };
                     
                     
@@ -195,10 +197,12 @@ var fishModule = (function(){
         return;
     }
 
-    function mateAllFish(fish_array, marker_arr, map){
+    function mateAllFish(fish_array, marker_arr, map, maxPop){
         for (i = 0; i < fish_array.length-1; i++){
             for (j = i+1; j < fish_array.length; j++){
-                mateFish(fish_array[i], fish_array[j], marker_arr, map);
+                if (fish_array.length < maxPop){
+                    mateFish(fish_array[i], fish_array[j], marker_arr, map);
+                }
             }
         }
         return;
@@ -213,7 +217,7 @@ var fishModule = (function(){
                 fish_arr[i].readyToMate();
                 fish_arr[i].isRepel(fish_arr);
             }
-            mateAllFish(fish_arr, marker_arr, map);
+            mateAllFish(fish_arr, marker_arr, map, maxPop);
             calcAllFishMovement(fish_arr);
         },
 
@@ -414,9 +418,9 @@ function setMarkers(map, num_fish, marker_arr){
      var icon = {
         url: "../Images/FishUp.gif",
         optimized: false,
-        scaledSize: new google.maps.Size(25, 50), // scaled size
+        scaledSize: new google.maps.Size(12, 25), // scaled size
         origin: new google.maps.Point(0,0), // origin
-        anchor: new google.maps.Point(0, 0) // anchor
+        anchor: new google.maps.Point(6, 12) // anchor
     };
 
     for (i = 0; i < num_fish; i++){
