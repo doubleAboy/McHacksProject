@@ -320,25 +320,61 @@ var movementModule = (function(boatModule, fishModule, actionModule){
     }
 
     function boatController(boat, marker, boat_circle, map){
+        var up_icon = {
+            url: "../Images/BoatUp.gif",
+            optimized: false,
+            scaledSize: new google.maps.Size(35, 50), // scaled size
+            origin: new google.maps.Point(0,0), // origin
+            anchor: new google.maps.Point(17,25) // anchor
+        };
+
+        var down_icon = {
+            url: "../Images/BoatDown.gif",
+            optimized: false,
+            scaledSize: new google.maps.Size(35, 50), // scaled size
+            origin: new google.maps.Point(0,0), // origin
+            anchor: new google.maps.Point(17,25) // anchor
+        };
+
+        var left_icon = {
+            url: "../Images/BoatLeft.gif",
+            optimized: false,
+            scaledSize: new google.maps.Size(50, 35), // scaled size
+            origin: new google.maps.Point(0,0), // origin
+            anchor: new google.maps.Point(25,17) // anchor
+        };
+
+        var right_icon = {
+            url: "../Images/BoatRight.gif",
+            optimized: false,
+            scaledSize: new google.maps.Size(50, 35), // scaled size
+            origin: new google.maps.Point(0,0), // origin
+            anchor: new google.maps.Point(25,17) // anchor
+        };
+
         window.addEventListener("keydown", function(e){
             switch (event.keyCode){
                 case 65: //left 
                     moveMarker(map, marker, boat, -0.5, 0); //moves boat marker
+                    marker.setIcon(left_icon);
                     moveCircle(map, boat_circle, boat); //moves circle
                     panToMarker(map, boat); //pans map to boat marker
 			        break;
 			    case 87: //up
                     moveMarker(map, marker, boat, 0, 0.5);
+                    marker.setIcon(up_icon);
                     moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
 			    case 68: //right
                     moveMarker(map, marker, boat, 0.5, 0);
+                    marker.setIcon(right_icon);
                     moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
 			    case 83: //down
                     moveMarker(map, marker, boat, 0, -0.5);
+                    marker.setIcon(down_icon);
                     moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
@@ -355,7 +391,7 @@ var movementModule = (function(boatModule, fishModule, actionModule){
                 strokeOpacity: 0.5,
                 strokeWeight: 1,
                 fillColor: '#FF0000',
-                fillOpacity: 0.05,
+                fillOpacity: 0.00,
                 map: map,
                 center: boat_marker.position,
                 radius: 333000
@@ -412,11 +448,19 @@ function initMap(){
     fishModule.generateFishes(num_fish, boat, bounds);
     fish_arr = fishModule.getFishArr();
 
+    var down_icon = {
+        url: "../Images/BoatDown.gif",
+        optimized: false,
+        scaledSize: new google.maps.Size(35, 50), // scaled size
+        origin: new google.maps.Point(0,0), // origin
+        anchor: new google.maps.Point(17,25) // anchor
+    };
+
     var boat_marker = new google.maps.Marker({
         position: boat,
         map: map,
         optimized: false,
-        icon: "../Images/BoatDown.gif"
+        icon: down_icon
     });
 
     setMarkers(map, num_fish, marker_arr);
