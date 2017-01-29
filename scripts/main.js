@@ -55,16 +55,79 @@ var fishModule = (function(){
         this.vely = Math.random()*0.05*posneg();
         this.age = 0,
         this.dead = false,
-        this.repelling = false
+        this.repelling = false,
+        this.repelEpsilon = 3,
+        this.canMate = false,
+        this.mateRange = 3,
+        this.timeSinceLastMate = 0,
+        this.litterSize = 5
     };
 
-/*
-    function calcMovement (fish, fish_arr){
-
+    Fish.prototype.isDead = function(){
+        if (this.age > 50){
+            this.dead = true;
+            this.velx = 0;
+            this.vely = 0;
+            this.repelling = false;
+            this.canMate = false;
+        }
     }
-*/
+
+    Fish.prototype.readyToMate = function(){
+        if (this.age > 10 && this.age < 42 && this.timeSinceLastMate > 8){
+            this.canMate = true;
+        } else {
+            this.canMate = false;
+        }
+    }
+
+    Fish.prototype.calcMovement = function(){
+        return;
+    }
+
+    function mateFish(fish1, fish2, marker_arr, map){
+        if (fish1.canMate && fish2.canMate){
+            if (Math.sqrt(Math.pow(fish1.lng - fish2.lng, 2) + Math.pow(fish1.lat - fish2.lat, 2)) < fish1.mateRange){
+                fish1.canMate = false;
+                fish2.canMate = false;
+                fish1.timeSinceLastMate = 0;
+                fish2.timeSinceLastMate = 0;
+                for (i = 0; i < Math.round(Math.random()*fish1.litterSize + 2); i++){
+                    var baby_fish = new Fish ("babyFish", (fish1.lat + fish2.lat)/2 + Math.random()*0.02, (fish1.lng + fish2.lng)/2 + Math.random()*0.02);
+                    fish_array.push( baby_fish );
+
+                    var fish_marker = new google.maps.Marker({
+                        position: fishModule.getFishPos(baby_fish),
+                        map: map
+                    });
+                    marker_arr.push(fish_marker);
+                }
+            }
+        }
+        return;
+    }
+
+    function mateAllFish(fish_array, marker_arr, map){
+        for (i = 0; i < fish_array.length-1; i++){
+            for (j = i+1; j < fish_array.length; j++){
+                mateFish(fish_array[i], fish_array[j], marker_arr, map);
+            }
+        }
+        return;
+    }
 
     return {
+        calcAllFish: function(fish_arr, marker_arr, map){
+            for (i = 0; i < fish_arr.length; i++){
+                fish_arr[i].age += 30/1000;
+                fish_arr[i].timeSinceLastMate += 30/1000;
+                fish_arr[i].isDead();
+                fish_arr[i].readyToMate();
+            }
+
+            mateAllFish(fish_arr, marker_arr, map);
+        },
+
         createFish: function (name, lat, lng){
             var fish = new Fish (name, lat, lng);
             fish_array.push(fish);
@@ -134,7 +197,8 @@ var actionModule = (function(boatModule, fishModule){
     }
 
     return {
-        frameAction: function(boat, fish_arr, marker_arr){
+        frameAction: function(boat, fish_arr, marker_arr, map){  //calculates differences for each frame
+            fishModule.calcAllFish(fish_arr, marker_arr, map);
             calcAllBoats(boat, fish_arr, marker_arr);
         }
     }
@@ -208,8 +272,9 @@ var movementModule = (function(boatModule, fishModule, actionModule){
                 radius: 333000
             });
             boatController(boat, boat_marker, boat_circle, map);
-            var fish_movement = setInterval( function(){
-                actionModule.frameAction(boat, fish_arr, marker_arr);
+
+            var fish_movement = setInterval( function(){ //the setInterval
+                actionModule.frameAction(boat, fish_arr, marker_arr, map);
                 for (i = 0; i < fish_arr.length; i++){
                     //alert(i);
                     moveMarker(map, marker_arr[i], fish_arr[i], fish_arr[i].velx, fish_arr[i].vely);
