@@ -444,7 +444,7 @@ var movementModule = (function(boatModule, fishModule, actionModule){
                 for (i = 0; i < fish_arr.length; i++){
                     //alert(i);
                     moveMarker(map, marker_arr[i], fish_arr[i], fish_arr[i].velx, fish_arr[i].vely);
-                    if (fish_arr[i].velx > fish_arr[i].vely){
+                    if (Math.abs(fish_arr[i].velx) > Math.abs(fish_arr[i].vely)){
                         if (fish_arr[i].velx > 0){
                             marker_arr[i].setIcon(right_fish);
                         } else {
@@ -520,7 +520,7 @@ function initMap(){
     //isWater(-25, 175);
     //isWater(-25, 124);
     //boatModule.createBoat ("BoatyMcBoatFace", -25.363, 131.044);
-    boatModule.createBoat ("BoatyMcBoatFace", -25.363, 175.044);
+    boatModule.createBoat ("BoatyMcBoatFace", -25.363, -20.044);
     var boat = boatModule.getBoat();
     var num_fish = 10;
     var bounds = 10;
