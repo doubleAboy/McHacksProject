@@ -44,6 +44,16 @@ var fishModule = (function(){
         }
     }
 
+    function numFishInRange(fish, fish_arr){
+        var num_fish_in_range = 0;
+        for (j = 0; j < fish_arr.length; j++){
+            if (Math.sqrt(Math.pow(fish_arr[j].lng - fish.lng, 2) + Math.pow(fish_arr[j].lat - fish.lat, 2)) < fish.repelEpsilon){
+                num_fish_in_range += 1;
+            }
+        }
+        return num_fish_in_range;
+    }
+
     function Fish (name, lat, lng) {
         this.name = name;
         this.colour = "rgb(255, 77, 77)"
@@ -51,17 +61,83 @@ var fishModule = (function(){
 		this.weight = 5;
         this.lat = lat;
         this.lng = lng;
-        this.velx = Math.random()*0.05*posneg(); //speedx and speedy between -0.1 and 0.1
-        this.vely = Math.random()*0.05*posneg();
+        this.velx = 0.05*posneg(); //speedx and speedy between -0.1 and 0.1
+        this.vely = 0.05*posneg();
+        this.maxvel = Math.sqrt(Math.pow(this.velx, 2) + Math.pow(this.vely, 2));
         this.age = 0,
         this.dead = false,
         this.repelling = false,
-        this.repelEpsilon = 3,
+        this.repelEpsilon = 5,  //distance for density for repelling
         this.canMate = false,
         this.mateRange = 3,
         this.timeSinceLastMate = 0,
-        this.litterSize = 5
+        this.litterSize = 5,
+        this.libido = Math.random()*4 + 4,
+        this.attractionlimit = 20
     };
+
+    function repelWeight(dist){
+        return 1/dist;
+    }
+
+    function attractWeight(dist){
+        return Math.sqrt(dist);
+    }
+
+    function calcAllFishMovement(fish_arr){
+        for (i = 0; i < fish_arr.length; i++){
+            for (j = 0; j < fish_arr.length; j++){
+                if ( i == j ) continue;
+                if (fish_arr[i].repelling || fish_arr[j].repelling){
+                    var dvx = repelWeight(Math.abs(fish_arr[i].lng - fish_arr[j].lng));
+                    var dvy = repelWeight(Math.abs(fish_arr[i].lat - fish_arr[j].lat));
+                    if (fish_arr[i].lng - fish_arr[j].lng > 0){
+                        fish_arr[i].velx += dvx;
+                    } else {
+                        fish_arr[i].velx -= dvx;
+                    }
+
+                    if (fish_arr[i].lat - fish_arr[j].lat > 0){
+                        fish_arr[i].vely += dvy;
+                    } else {
+                        fish_arr[i].vely -= dvy;
+                    }
+                    var tvel = Math.sqrt(Math.pow(fish_arr[i].velx, 2) + Math.pow(fish_arr[i].vely, 2));
+                    fish_arr[i].velx = (fish_arr[i].velx/tvel) * fish_arr[i].maxvel;
+                    fish_arr[i].vely = (fish_arr[i].vely/tvel) * fish_arr[i].maxvel;
+                } else if (fish)
+                else {
+                    var dvx = attractWeight(Math.abs(fish_arr[i].lng - fish_arr[j].lng));
+                    var dvy = attractWeight(Math.abs(fish_arr[i].lat - fish_arr[j].lat));
+                    if (fish_arr[i].lng - fish_arr[j].lng > 0){
+                        fish_arr[i].velx -= dvx;
+                    } else {
+                        fish_arr[i].velx += dvx;
+                    }
+
+                    if (fish_arr[i].lat - fish_arr[j].lat > 0){
+                        fish_arr[i].vely -= dvy;
+                    } else {
+                        fish_arr[i].vely += dvy;
+                    }
+                    var tvel = Math.sqrt(Math.pow(fish_arr[i].velx, 2) + Math.pow(fish_arr[i].vely, 2));
+                    fish_arr[i].velx = (fish_arr[i].velx/tvel) * fish_arr[i].maxvel;
+                    fish_arr[i].vely = (fish_arr[i].vely/tvel) * fish_arr[i].maxvel;
+                }
+
+            }
+        }
+    }
+
+    Fish.prototype.isRepel = function(fish_arr){
+        if (numFishInRange(this, fish_arr) > 4){ //4 is the number of fish in range before repel, it includes itself
+            this.repelling = true;
+        } else if (this.timeSinceLastMate < this.libido) {
+            this.repelling = true;
+        } else{
+            this.repelling = false;
+        }
+    }
 
     Fish.prototype.isDead = function(){
         if (this.age > 50){
@@ -79,10 +155,6 @@ var fishModule = (function(){
         } else {
             this.canMate = false;
         }
-    }
-
-    Fish.prototype.calcMovement = function(){
-        return;
     }
 
     function mateFish(fish1, fish2, marker_arr, map){
@@ -123,9 +195,10 @@ var fishModule = (function(){
                 fish_arr[i].timeSinceLastMate += 30/1000;
                 fish_arr[i].isDead();
                 fish_arr[i].readyToMate();
+                fish_arr[i].isRepel(fish_arr);
             }
-
             mateAllFish(fish_arr, marker_arr, map);
+            calcAllFishMovement(fish_arr);
         },
 
         createFish: function (name, lat, lng){
