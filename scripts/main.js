@@ -161,22 +161,22 @@ var movementModule = (function(boatModule, fishModule, actionModule){
         window.addEventListener("keydown", function(e){
             switch (event.keyCode){
                 case 37: 
-                    moveMarker(map, marker, boat, -0.3, 0);
+                    moveMarker(map, marker, boat, -0.5, 0);
                     moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
 			    case 38: 
-                    moveMarker(map, marker, boat, 0, 0.3);
+                    moveMarker(map, marker, boat, 0, 0.5);
                     moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
 			    case 39: 
-                    moveMarker(map, marker, boat, 0.3, 0);
+                    moveMarker(map, marker, boat, 0.5, 0);
                     moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
 			    case 40: 
-                    moveMarker(map, marker, boat, 0, -0.3);
+                    moveMarker(map, marker, boat, 0, -0.5);
                     moveCircle(map, boat_circle, boat);
                     panToMarker(map, boat);
 			        break;
