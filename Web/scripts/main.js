@@ -11,7 +11,7 @@ var boatModule = (function(){
         this.velx = 0;
         this.vely = 0;
         this.caught_fish = 0;
-        this.weight = 0;
+        this.weight = 20;
     };
 
     return {
@@ -290,6 +290,7 @@ var actionModule = (function(boatModule, fishModule){
         boat.caught_fish += 1;
 	    document.getElementById("num").innerHTML = "Number of Fish Caught: " + boat.caught_fish;
         boat.weight += fish_arr[fish_index].weight;
+	document.getElementById("energy").innerHTML = "Energy: " + boat.weight;    
         fishModule.decreasePop(1);
 
         fish_arr.splice(fish_index, 1);
@@ -310,7 +311,13 @@ var actionModule = (function(boatModule, fishModule){
         frameAction: function(boat, fish_arr, marker_arr, map){  //calculates differences for each frame
             fishModule.calcAllFish(fish_arr, marker_arr, map);
             calcAllBoats(boat, fish_arr, marker_arr);
-        }
+	           boat.weight -= 0.03;
+		document.getElementById("energy").innerHTML = "Energy: " + boat.weight;
+		if(boat.weight <= 0){
+			alert("Unfortunately, you're energy has dropped below zero. Though you have left a good stock of fish free in the wild, I'm afraid many of your friends are hungry. Game Over!!!");
+			boat.weight = 20;
+		}
+	}
     }
 }(boatModule, fishModule));
 
