@@ -262,6 +262,10 @@ var fishModule = (function(){
 		
 		getFishPos: function(fish){
 			return {lat: fish.lat, lng: fish.lng};
+		},
+	    
+	    getFishPop: function(){
+			return currPop;
 		}
     }
 }());
@@ -316,6 +320,12 @@ var actionModule = (function(boatModule, fishModule){
 		if(boat.weight <= 0){
 			alert("Unfortunately, you're energy has dropped below zero. Though you have left a good stock of fish free in the wild, I'm afraid many of your friends are hungry. Game Over!!!");
 			boat.weight = 20;
+		}
+		document.getElementById("pop").innerHTML = "Number of Fish Remaining: " + fishModule.getFishPop();
+		if(fishModule.getFishPop() <= 1){
+			alert("Unfortunately, all fish are extinct. I'm afraid you have overfished. Game Over!!!");
+			fishModule.generateFishes(10, boat, 10);
+			fishModule.decreasePop(-10);
 		}
 	}
     }
