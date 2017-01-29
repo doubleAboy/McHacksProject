@@ -11,7 +11,7 @@ var boatModule = (function(){
         this.velx = 0;
         this.vely = 0;
         this.caught_fish = 0;
-        this.weight = 0;
+        this.weight = 20;
     };
 
     return {
@@ -179,7 +179,8 @@ var fishModule = (function(){
 
                     var icon = {
                         url: "../Images/FishUp.gif",
-                        optimized: false,
+
+			    optimized: false,
                         scaledSize: new google.maps.Size(12, 25), // scaled size
                         origin: new google.maps.Point(0,0), // origin
                         anchor: new google.maps.Point(6, 12) // anchor
@@ -221,6 +222,12 @@ var fishModule = (function(){
                 fish_arr[i].age += 30/1000;
                 fish_arr[i].timeSinceLastMate += 30/1000;
                 fish_arr[i].isDead();
+		if(fish_arr[i].dead){
+			fish_arr.splice(i, 1);
+			marker_arr[i].setMap(null);
+			marker_arr.splice(i, 1);
+			i--;
+		}
                 fish_arr[i].readyToMate();
                 fish_arr[i].isRepel(fish_arr);
             }
@@ -233,7 +240,8 @@ var fishModule = (function(){
             fish_array.push(fish);
         },
 
-        getFish: function (ind){
+
+	    getFish: function (ind){
             return fish_array[ind];
         },
 
@@ -254,6 +262,10 @@ var fishModule = (function(){
 		
 		getFishPos: function(fish){
 			return {lat: fish.lat, lng: fish.lng};
+		},
+	    
+	    getFishPop: function(){
+			return currPop;
 		}
     }
 }());
@@ -280,11 +292,13 @@ var actionModule = (function(boatModule, fishModule){
             return
         }
         boat.caught_fish += 1;
+	    document.getElementById("num").innerHTML = "Number of Fish Caught: " + boat.caught_fish;
         boat.weight += fish_arr[fish_index].weight;
+	document.getElementById("energy").innerHTML = "Energy: " + boat.weight;    
         fishModule.decreasePop(1);
 
         fish_arr.splice(fish_index, 1);
-        marker_arr[i].setMap(null);
+        marker_arr[fish_index].setMap(null);
         marker_arr.splice(fish_index, 1);
         //alert(fish_arr);
         //alert(marker_arr);
@@ -301,7 +315,19 @@ var actionModule = (function(boatModule, fishModule){
         frameAction: function(boat, fish_arr, marker_arr, map){  //calculates differences for each frame
             fishModule.calcAllFish(fish_arr, marker_arr, map);
             calcAllBoats(boat, fish_arr, marker_arr);
-        }
+	           boat.weight -= 0.03;
+		document.getElementById("energy").innerHTML = "Energy: " + boat.weight;
+		if(boat.weight <= 0){
+			alert("Unfortunately, you're energy has dropped below zero. Though you have left a good stock of fish free in the wild, I'm afraid many of your friends are hungry. Game Over!!!");
+			boat.weight = 20;
+		}
+		document.getElementById("pop").innerHTML = "Number of Fish Remaining: " + fishModule.getFishPop();
+		if(fishModule.getFishPop() <= 1){
+			alert("Unfortunately, all fish are extinct. I'm afraid you have overfished. Game Over!!!");
+			fishModule.generateFishes(10, boat, 10);
+			fishModule.decreasePop(-10);
+		}
+	}
     }
 }(boatModule, fishModule));
 
@@ -486,7 +512,6 @@ function setMarkers(map, num_fish, marker_arr){
     }
 }
 
-
 function isLand(pointLat, pointLong){
     
     var myImg = document.getElementById("mapImg");
@@ -526,8 +551,8 @@ function isLand(pointLat, pointLong){
 	} */ 
 }
 
-function initMap(){
-    isLand(39,-38);
+function initMap(){ 
+    //boatModule.createBoat ("BoatyMcBoatFace", -25.363, 131.044);
     boatModule.createBoat ("BoatyMcBoatFace", -25.363, -20.044);
     var boat = boatModule.getBoat();
     var num_fish = 10;

@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
   <title>McHacks 2017 Fish game</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="bootstrap.min.css">
   <link href="css.css" rel="stylesheet">
   <script src="jquery.min.js"></script>
@@ -13,8 +12,7 @@
       font: 20px Montserrat, sans-serif;
       line-height: 1.8;
       color: #f5f6f7;
-  }
-  p {font-size: 16px;}
+  }  p {font-size: 16px;}
   .margin {margin-bottom: 45px;}
   .bg-1 { 
       background-color: #9bbff4;
@@ -24,8 +22,7 @@
       background-color: #bbdaa4;;
       color: #ffffff;
   }
-  .bg-2 { 
-      background-color: #ffffff;
+  .bg-2 {       background-color: #ffffff;
       color: #555555;
   }
   .bg-4 { 
@@ -45,32 +42,35 @@
 </head>
 <body>
     <div class="container-fluid bg-1a text-center">
-    <h1 class="margin">This is...</h1>
+    <h1 class="margin">Welcome to...</h1>
     <img src="../Images/FishUpWhite.gif" class="img-responsive img-circle margin" style="display:inline" alt="Image" width="100" height="100">
-    <h3>The Fish Game!</h3>
+    <h3>In Cod we Trust!</h3><br/>
+      <h5>(If you can think of a better fish pun, let minnow!)</h5> 
     </div>
-
+ 
     <div class="container-fluid bg-3 text-center">    
     <h3 class="margin">How to play?</h3><br>
-        <div class="row">
+
+      <div class="row">
             <div class="col-sm-4">
-            <p>Direction 1.</p>
-            <img src="../Images/capture.PNG" class="img-responsive margin" style="width:100%" alt="Image">
+            <p>Welcome! You're an aspiring fisher navigating the high seas with your trusty ship. To steer, simply use the WASD keys to move across the map. You may also zoom the map in or out using the slider at the right of the screen.<br><br><br></p>
+            <img src="../Images/BoatEx1.gif" class="img-responsive margin" style="width:100%" alt="Image">
             </div>
-            <div class="col-sm-4"> 
-            <p>Direction 2.</p>
-            <img src="../Images/capture.PNG" class="img-responsive margin" style="width:100%" alt="Image">
+            <div class="col-sm-4">
+            <p>To catch your haul, simply chase after the fish. When they cross within the range of your “net” (displayed by circle) they’ll be added to your stock. But be careful! Fish you fail to catch in time may die off. At the same time, overfish and miss out on lucrative opportunities involving their offspring. </p>
+            <img src="../Images/FishCaseP2.png" class="img-responsive margin" style="width:100%" alt="Image">
             </div>
-            <div class="col-sm-4"> 
-            <p>Direction 3.</p>
+            <div class="col-sm-4">
+            <p>Some other things to keep in mind. The number of fish caught is displayed below. Going after schools of fish may help maximize your catch rate. Now go forth and challenge your friends for honor and glory.<br><br><br></p>
             <img src="../Images/capture.PNG" class="img-responsive margin" style="width:100%" alt="Image">
             </div>
         </div>
     </div>
 
+
     <div class="container-fluid bg-2 text-center">
-        <h3 class="margin">What is it?</h3>
-        <p>Some funny speech.</p>
+    <h3 class="margin">What is it?</h3>
+    <p>Overfishing all over the globe has turned the practice into a national issue that affects our natural ecosystem as well as the well-being of everyone on this planet. Every year, almost 25% of of fish stocks are depleted and/or overexploited, while another 52% remains in imminent danger. A lack of stringent federal regulations and illegal fishing has contributed terribly to the amassing destruction, and not enough awareness is being brought to this issue. This game has been designed to give insight into the challenges of maintaining a sustainable fish population while still catching a required amount of food. Along with its addictive retro style, this webgame employs Google APIs and Artificial Intelligence to address modern day issues and to enhance the overall player experience. Balance your fishing just right to maintain a healthy ecosystem. Else, the whole world will come crashing down... Best of Luck!!</p>
 
         <button class="btn btn-primary btn-lg" data-toggle="collapse" data-target="#demo">Click here to play!</button>
         <div id = "demo" class = "collapsing">
@@ -89,6 +89,7 @@
                 <script async defer
                     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjEiPLon9zQxbeL7xRux9UAvYtW3xKvzs&callback=initMap">
                 </script>
+              <div id="num">Number of Fish Caught:  0</div> <div id="energy">Energy:  20</div><div id="pop">Number of Fish Remaining:  10</div>
             </body>
         </div>
     </div>
