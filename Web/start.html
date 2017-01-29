@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Some fish game</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <link href="css.css" rel="stylesheet">
+  <script src="jquery.min.js"></script>
+  <script src="bootstrap.min.js"></script>
+  <style>
+  body {
+      font: 20px Montserrat, sans-serif;
+      line-height: 1.8;
+      color: #f5f6f7;
+  }
+  p {font-size: 16px;}
+  .margin {margin-bottom: 45px;}
+  .bg-1 { 
+      background-color: #9bbff4;
+      color: #ffffff;
+  }
+  .bg-3 { 
+      background-color: #bbdaa4;;
+      color: #ffffff;
+  }
+  .bg-2 { 
+      background-color: #ffffff;
+      color: #555555;
+  }
+  .bg-4 { 
+      background-color: #f18d00; 
+      color: #fff;
+  }
+  .bg-1a { 
+      background-image: url('../Images/IntroBackground.PNG');
+      color: #ffffff;
+  }
+  .container-fluid {
+      padding-top: 70px;
+      padding-bottom: 70px;
+  }
+
+  </style>
+</head>
+<body>
+
+    <div class="container-fluid bg-1a text-center">
+    <h1 class="margin">This is...</h1>
+    <img src="../Images/FishUpWhite.gif" class="img-responsive img-circle margin" style="display:inline" alt="Image" width="100" height="100">
+    <h3>The Fish Game!</h3>
+    </div>
+
+    <div class="container-fluid bg-3 text-center">    
+    <h3 class="margin">How to play?</h3><br>
+        <div class="row">
+            <div class="col-sm-4">
+            <p>Direction 1.</p>
+            <img src="../Images/capture.PNG" class="img-responsive margin" style="width:100%" alt="Image">
+            </div>
+            <div class="col-sm-4"> 
+            <p>Direction 2.</p>
+            <img src="../Images/capture.PNG" class="img-responsive margin" style="width:100%" alt="Image">
+            </div>
+            <div class="col-sm-4"> 
+            <p>Direction 3.</p>
+            <img src="../Images/capture.PNG" class="img-responsive margin" style="width:100%" alt="Image">
+            </div>
+        </div>
+    </div>
+
+
+<div class="container-fluid bg-2 text-center">
+    <h3 class="margin">What is it?</h3>
+    <p>Some funny speech.</p>
+
+        <button class="btn btn-primary btn-lg" data-toggle="collapse" data-target="#demo">Click here to play!</button>
+        <div id = "demo" class = "collapsing">
+            <head>
+            <style>
+            #map {
+                height: 400px;
+                width: 100%;
+            }
+            </style>
+            </head>
+            <body>
+                <h3>Save the Earth: Game Version</h3>
+                <div id="map" width="500" height="500"></div>
+                <script  type="text/javascript" src="./scripts/main.js"></script>
+                <script async defer
+                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjEiPLon9zQxbeL7xRux9UAvYtW3xKvzs&callback=initMap">
+                </script>
+            </body>
+        </div>
+
+    </div>
+
+
+<footer class="container-fluid bg-4 text-center">
+  <p>For McHacks 2017</p> 
+</footer>
+
+</body>
+</html>
+
