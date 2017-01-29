@@ -33,6 +33,7 @@ var boatModule = (function(){
 //fishModule
 var fishModule = (function(){
     var maxPop = 20;
+    var currPop = 10;
 
     var fish_array = [];
 
@@ -149,6 +150,7 @@ var fishModule = (function(){
             this.vely = 0;
             this.repelling = 1;
             this.canMate = false;
+            currPop -= 1;
         }
     }
 
@@ -170,6 +172,7 @@ var fishModule = (function(){
                 for (i = 0; i < Math.round(Math.random()*fish1.litterSize + 2); i++){
                     var baby_fish = new Fish ("babyFish", (fish1.lat + fish2.lat)/2 + Math.random()*0.02, (fish1.lng + fish2.lng)/2 + Math.random()*0.02);
                     fish_array.push( baby_fish );
+                    currPop += 1;
 
 
                     //Add in to resize smaller fish
@@ -200,7 +203,7 @@ var fishModule = (function(){
     function mateAllFish(fish_array, marker_arr, map, maxPop){
         for (i = 0; i < fish_array.length-1; i++){
             for (j = i+1; j < fish_array.length; j++){
-                if (fish_array.length < maxPop){
+                if (currPop < maxPop){
                     mateFish(fish_array[i], fish_array[j], marker_arr, map);
                 }
             }
@@ -209,6 +212,10 @@ var fishModule = (function(){
     }
 
     return {
+        decreasePop: function(n){
+            currPop -= n;
+        },
+
         calcAllFish: function(fish_arr, marker_arr, map){
             for (i = 0; i < fish_arr.length; i++){
                 fish_arr[i].age += 30/1000;
@@ -274,6 +281,7 @@ var actionModule = (function(boatModule, fishModule){
         }
         boat.caught_fish += 1;
         boat.weight += fish_arr[fish_index].weight;
+        fishModule.decreasePop(1);
 
         fish_arr.splice(fish_index, 1);
         marker_arr[i].setMap(null);
@@ -402,11 +410,53 @@ var movementModule = (function(boatModule, fishModule, actionModule){
             });
             boatController(boat, boat_marker, boat_circle, map);
 
+            var left_fish = {
+                url: "../Images/FishLeft.gif",
+                optimized: false,
+                scaledSize: new google.maps.Size(25, 12), // scaled size
+                origin: new google.maps.Point(0,0), // origin
+                anchor: new google.maps.Point(12,6) // anchor
+            };
+            var right_fish = {
+                url: "../Images/FishRight.gif",
+                optimized: false,
+                scaledSize: new google.maps.Size(25, 12), // scaled size
+                origin: new google.maps.Point(0,0), // origin
+                anchor: new google.maps.Point(12,6) // anchor
+            };
+            var up_fish = {
+                url: "../Images/FishUp.gif",
+                optimized: false,
+                scaledSize: new google.maps.Size(12, 25), // scaled size
+                origin: new google.maps.Point(0,0), // origin
+                anchor: new google.maps.Point(6,12) // anchor
+            };
+            var down_fish = {
+                url: "../Images/FishDown.gif",
+                optimized: false,
+                scaledSize: new google.maps.Size(12, 25), // scaled size
+                origin: new google.maps.Point(0,0), // origin
+                anchor: new google.maps.Point(6,12) // anchor
+            };
+
             var fish_movement = setInterval( function(){ //the setInterval
                 actionModule.frameAction(boat, fish_arr, marker_arr, map);
                 for (i = 0; i < fish_arr.length; i++){
                     //alert(i);
                     moveMarker(map, marker_arr[i], fish_arr[i], fish_arr[i].velx, fish_arr[i].vely);
+                    if (fish_arr[i].velx > fish_arr[i].vely){
+                        if (fish_arr[i].velx > 0){
+                            marker_arr[i].setIcon(right_fish);
+                        } else {
+                            marker_arr[i].setIcon(left_fish);
+                        }
+                    } else {
+                        if (fish_arr[i].vely > 0){
+                            marker_arr[i].setIcon(up_fish);
+                        } else {
+                            marker_arr[i].setIcon(down_fish);
+                        }
+                    }
                 }
             }, 1000/30);
         }
@@ -447,19 +497,30 @@ function isWater(pointLat, pointLong){
 		canvas.height = img.height;			
 		canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
 		var pixelData = canvas.getContext('2d').getImageData(1, 1, 1, 1).data;
+
+        alert()
 		//check color
+        alert(pixelData[0]);
+        alert(pixelData[1]);
+        alert(pixelData[2]);
 		if (pixelData[0] == 163 &&
 			pixelData[1] == 204 &&
 			pixelData[2] == 255) {
+            alert("true");
 			return true;
 		} else {
+            alert("false");
 			return false;
-	}
+	    }
 }
 
 function initMap(){
+    
+
+    //isWater(-25, 175);
+    //isWater(-25, 124);
     //boatModule.createBoat ("BoatyMcBoatFace", -25.363, 131.044);
-    boatModule.createBoat ("BoatyMcBoatFace", -25.363, 170.044);
+    boatModule.createBoat ("BoatyMcBoatFace", -25.363, 175.044);
     var boat = boatModule.getBoat();
     var num_fish = 10;
     var bounds = 10;
