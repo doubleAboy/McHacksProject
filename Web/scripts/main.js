@@ -493,7 +493,7 @@ function setMarkers(map, num_fish, marker_arr){
 
      var icon = {
         url: "../Images/FishUp.gif",
-        optimized: false,
+         optimized: false,
         scaledSize: new google.maps.Size(12, 25), // scaled size
         origin: new google.maps.Point(0,0), // origin
         anchor: new google.maps.Point(6, 12) // anchor
@@ -548,4 +548,5 @@ function initMap(){
     movementModule.init(boat, boat_marker, fish_arr, marker_arr, map);
 };
 
-window.addEventListener("onload", initMap());
+var button = document.getElementById("startButton");
+button.addEventListener("onclick", initMap());
